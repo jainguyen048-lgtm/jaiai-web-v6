@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>JaiAI v6.5.1 Beta</title>
+<title>JaiAI v6.5.2 Beta</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap');
 :root{--bg:#070707;--panel:#101010;--panel2:#171717;--panel3:#1e1e1e;--border:#2d2d2d;--border2:#3d3d3d;--y:#f5c400;--y2:#ffd740;--text:#f2f2f2;--muted:#a0a0a0;--dim:#666;--red:#ff5c5c;--green:#45d18a;--blue:#6aa8ff;--r:14px;--ease:cubic-bezier(.4,0,.2,1)}
@@ -50,6 +50,18 @@ button:hover{transform:translateY(-1px)}button:active{transform:translateY(0) sc
 .rename-modal{display:none;position:fixed;inset:0;z-index:120;background:rgba(0,0,0,.62);align-items:center;justify-content:center}.rename-modal.show{display:flex}.rename-card{width:min(420px,calc(100vw - 32px));background:rgba(15,15,15,.98);border:1px solid var(--border2);border-radius:18px;padding:18px;box-shadow:0 30px 90px rgba(0,0,0,.7)}.rename-card h3{margin:0 0 12px}.rename-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:14px}
 @media(max-width:900px){.sidebar{width:220px;min-width:220px}.composer{left:220px}.bubble{max-width:calc(100vw - 300px)}.usage-box{grid-template-columns:1fr}.top-actions{gap:5px}.mini-btn{padding:8px}}
 
+/* v6.5.2 source panel cleanup */
+.sources{background:rgba(245,196,0,.045);border:1px solid rgba(245,196,0,.13);border-radius:14px;padding:12px;margin-top:16px;color:var(--muted);font-size:12px}
+.sources-title{display:flex;align-items:center;justify-content:space-between;gap:8px;color:var(--text);font-weight:900;margin-bottom:8px}
+.sources-title span{font-size:11px;color:var(--dim);font-weight:800}
+.source-card{display:block;border:1px solid rgba(255,255,255,.075);background:rgba(255,255,255,.035);border-radius:11px;padding:9px 10px;margin:7px 0;text-decoration:none;color:var(--muted)}
+.source-card:hover{border-color:rgba(245,196,0,.34);background:rgba(245,196,0,.055);text-decoration:none}
+.source-card .source-top{display:flex;gap:7px;align-items:center;margin-bottom:4px;min-width:0}
+.source-card .tag{display:inline-block;color:#000;background:var(--y);border-radius:999px;padding:2px 7px;font-size:10px;font-weight:900;text-transform:none;flex:0 0 auto}
+.source-card .tag.official{background:#9ff0bd}.source-card .tag.useful{background:#ffe173}.source-card .tag.technical{background:#93c5ff}.source-card .tag.blog{background:#ffd18a}.source-card .tag.weak,.source-card .tag.unknown{background:#b8b8b8}
+.source-card b{display:block;color:var(--text);font-size:12.5px;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.source-card .url{display:block;color:var(--y);font-size:11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;border:0}
+
 </style>
 </head>
 <body>
@@ -62,7 +74,7 @@ button:hover{transform:translateY(-1px)}button:active{transform:translateY(0) sc
     <div class="field"><div class="label">Password</div><input class="input" id="auth-pass" type="password" placeholder="Password" autocomplete="current-password" onkeydown="if(event.key==='Enter')submitAuth()"/></div>
     <div class="error" id="auth-error"></div>
     <div class="row"><button class="btn btn-y" style="flex:1" id="auth-submit" onclick="submitAuth()">Log in</button></div>
-    <div class="small">JaiAI v6.5.1 Beta. If something breaks, screenshot it and send it to Jai.</div>
+    <div class="small">JaiAI v6.5.2 Beta. If something breaks, screenshot it and send it to Jai.</div>
   </div>
 </div>
 <div class="app" id="app">
@@ -80,7 +92,7 @@ button:hover{transform:translateY(-1px)}button:active{transform:translateY(0) sc
 </div>
 <input type="file" id="file-input" class="hidden" multiple onchange="handleFiles(this.files)" />
 <div class="web-pop" id="web-pop"><div class="web-option" data-web="auto" onclick="setWebMode('auto')">Auto</div><div class="web-option" data-web="on" onclick="setWebMode('on')">On for every message</div><div class="web-option" data-web="off" onclick="setWebMode('off')">Off</div></div>
-<div class="modal" id="settings"><div class="modal-card"><div class="modal-title">Settings</div><div class="modal-sub">JaiAI v6.5.1 Beta · account and preferences.</div><div class="settings-grid"><div class="field"><div class="label">Display name</div><input class="input" id="s-name"/></div><div class="field"><div class="label">System preference</div><textarea class="textarea" id="s-prompt" rows="4" placeholder="Example: answer casually, explain slowly, keep replies compact."></textarea><div class="small">Saved to your account and sent to JaiAI as your personal style preference.</div></div><div class="field"><div class="label">Free tier usage today</div><div class="usage-box"><div class="usage-card"><b id="usage-flash">0 / 100</b><span>V4-Flash prompts</span><div class="usage-bar"><i id="bar-flash"></i></div></div><div class="usage-card"><b id="usage-pro">0 / 20</b><span>V4-Pro prompts</span><div class="usage-bar"><i id="bar-pro"></i></div></div><div class="usage-card"><b id="usage-web">0 / 10</b><span>Web searches</span><div class="usage-bar"><i id="bar-web"></i></div></div></div><div class="small">Usage is checked by account and this device, so making a new account will not normally reset free-tier limits. Resets daily.</div></div><div class="field"><div class="label">Tier</div><div class="select-card"><div class="tier" id="tier-free"><b>Free Tier</b><div class="small">Daily limits apply.</div></div><div class="tier" id="tier-dev"><b>Developer Tier</b><div class="small">Unlimited access.</div></div></div></div><div class="field" id="unlock-wrap"><div class="label">Developer unlock</div><div class="row"><input class="input" id="dev-code" placeholder="Developer key" type="password"/><button class="btn btn-y" onclick="unlockDev()">Unlock</button></div></div><div class="field danger-line" id="revoke-wrap"><div class="label">Developer access</div><div class="row"><input class="input" id="revoke-code" placeholder="Developer key to revoke" type="password"/><button class="btn btn-danger" onclick="revokeDev()">Revoke</button></div><div class="small">Moves this account back to Free Tier. Useful for testing beta limits.</div></div><div class="settings-actions"><div><button class="btn btn-y" onclick="savePrefs()">Save</button><button class="btn btn-ghost" onclick="closeSettings()">Close</button></div><div class="save-status" id="save-status"></div></div></div></div></div>
+<div class="modal" id="settings"><div class="modal-card"><div class="modal-title">Settings</div><div class="modal-sub">JaiAI v6.5.2 Beta · account and preferences.</div><div class="settings-grid"><div class="field"><div class="label">Display name</div><input class="input" id="s-name"/></div><div class="field"><div class="label">System preference</div><textarea class="textarea" id="s-prompt" rows="4" placeholder="Example: answer casually, explain slowly, keep replies compact."></textarea><div class="small">Saved to your account and sent to JaiAI as your personal style preference.</div></div><div class="field"><div class="label">Free tier usage today</div><div class="usage-box"><div class="usage-card"><b id="usage-flash">0 / 100</b><span>V4-Flash prompts</span><div class="usage-bar"><i id="bar-flash"></i></div></div><div class="usage-card"><b id="usage-pro">0 / 20</b><span>V4-Pro prompts</span><div class="usage-bar"><i id="bar-pro"></i></div></div><div class="usage-card"><b id="usage-web">0 / 10</b><span>Web searches</span><div class="usage-bar"><i id="bar-web"></i></div></div></div><div class="small">Usage is checked by account and this device, so making a new account will not normally reset free-tier limits. Resets daily.</div></div><div class="field"><div class="label">Tier</div><div class="select-card"><div class="tier" id="tier-free"><b>Free Tier</b><div class="small">Daily limits apply.</div></div><div class="tier" id="tier-dev"><b>Developer Tier</b><div class="small">Unlimited access.</div></div></div></div><div class="field" id="unlock-wrap"><div class="label">Developer unlock</div><div class="row"><input class="input" id="dev-code" placeholder="Developer key" type="password"/><button class="btn btn-y" onclick="unlockDev()">Unlock</button></div></div><div class="field danger-line" id="revoke-wrap"><div class="label">Developer access</div><div class="row"><input class="input" id="revoke-code" placeholder="Developer key to revoke" type="password"/><button class="btn btn-danger" onclick="revokeDev()">Revoke</button></div><div class="small">Moves this account back to Free Tier. Useful for testing beta limits.</div></div><div class="settings-actions"><div><button class="btn btn-y" onclick="savePrefs()">Save</button><button class="btn btn-ghost" onclick="closeSettings()">Close</button></div><div class="save-status" id="save-status"></div></div></div></div></div>
 
 <div class="rename-modal" id="rename-modal"><div class="rename-card"><h3>Rename chat</h3><input class="input" id="rename-input" placeholder="Chat title" onkeydown="if(event.key==='Enter')confirmRename()"/><div class="rename-actions"><button class="btn btn-ghost" onclick="closeRename()">Cancel</button><button class="btn btn-y" onclick="confirmRename()">Save</button></div></div></div>
 <script>
@@ -120,22 +132,64 @@ function cleanDanglingMarkdown(s){
   t=t.replace(/(^|\s)\*{1,2}([.,!?;:])/g,'$1$2');
   return t;
 }
-function sourcesHtml(list){
-  const lines=String(list||'').split(/\n+/).map(x=>x.trim()).filter(Boolean);
-  let cards=[];
-  for(const line of lines){
-    const m=line.match(/^\d+\.\s*(?:\[([^\]]+)\])?\s*(.*?)\s+—\s+(https?:\/\/\S+)/);
-    if(m){cards.push(`<div class="source-card"><span class="tag">${esc(m[1]||'source')}</span><b>${inlineMd(m[2])}</b><br><a href="${esc(m[3])}" target="_blank">${esc(m[3])}</a></div>`)}
-    else cards.push(`<div class="source-card">${inlineMd(line)}</div>`);
+function decodeSourceMarker(b64){
+  try{
+    const bytes=Uint8Array.from(atob(b64),c=>c.charCodeAt(0));
+    return JSON.parse(new TextDecoder().decode(bytes));
+  }catch{return []}
+}
+function sourceLabel(type){
+  const t=String(type||'unknown').toLowerCase();
+  if(t==='official')return {label:'Official',cls:'official'};
+  if(t==='reputable')return {label:'Useful',cls:'useful'};
+  if(t==='technical')return {label:'Technical',cls:'technical'};
+  if(t.includes('blog'))return {label:'Blog',cls:'blog'};
+  if(t.includes('social')||t.includes('weak'))return {label:'Weak',cls:'weak'};
+  return {label:'Unknown',cls:'unknown'};
+}
+function dedupeSources(list){
+  const seen=new Set(),out=[];
+  for(const s of list||[]){
+    const url=String(s.url||'').trim();
+    const key=url.replace(/^https?:\/\/(www\.)?/,'').replace(/\/$/,'').toLowerCase() || String(s.title||'').toLowerCase();
+    if(!key||seen.has(key))continue;
+    seen.add(key);out.push({...s,url,title:String(s.title||'Untitled').slice(0,180),sourceType:s.sourceType||s.type||'unknown'});
+    if(out.length>=5)break;
   }
-  return '<div class="sources"><b>Sources</b>'+cards.join('')+'</div>';
+  return out;
+}
+function sourcePanel(list){
+  const src=dedupeSources(list);
+  if(!src.length)return '';
+  const cards=src.map((s,i)=>{const q=sourceLabel(s.sourceType);return `<a class="source-card" href="${esc(s.url)}" target="_blank" rel="noopener noreferrer"><div class="source-top"><span class="tag ${q.cls}">${q.label}</span><b>[${i+1}] ${inlineMd(s.title)}</b></div><span class="url">${esc(s.url)}</span></a>`}).join('');
+  return `<div class="sources"><div class="sources-title">Sources <span>${src.length} shown</span></div>${cards}</div>`;
+}
+function parseLegacySources(block){
+  const out=[];
+  for(const line of String(block||'').split(/\n+/).map(x=>x.trim()).filter(Boolean)){
+    const m=line.match(/^\d+\.\s*(?:\[([^\]]+)\])?\s*(.*?)\s+—\s+(https?:\/\/\S+)/) || line.match(/^[-*]?\s*(?:\[?\d+\]?\.?\s*)?(.*?)\s+(https?:\/\/\S+)/);
+    if(m){out.push({sourceType:m.length===4?(m[1]||'unknown'):'unknown',title:(m.length===4?m[2]:m[1])||'Source',url:(m.length===4?m[3]:m[2])})}
+  }
+  return out;
+}
+function extractSources(raw){
+  let text=String(raw||'');
+  let sources=[];
+  text=text.replace(/<!--JAI_SOURCES:([A-Za-z0-9+/=]+)-->/g,(m,b64)=>{sources.push(...decodeSourceMarker(b64));return ''});
+  text=text.replace(/(?:\n|^)(?:#{1,4}\s*)?(?:sources?|references?|links?)\s*:?\s*\n([\s\S]{0,5000})$/i,(m,block)=>{
+    const parsed=parseLegacySources(block);
+    const looksSourcey=parsed.length || /(https?:\/\/|\[\d+\]|^\s*\d+\.)/m.test(block);
+    if(looksSourcey){sources.push(...parsed);return '\n'}
+    return m;
+  });
+  return {text, sources:dedupeSources(sources)};
 }
 function fmt(s){
-  let raw=cleanDanglingMarkdown(String(s||''));
+  let parsed=extractSources(cleanDanglingMarkdown(String(s||'')));
+  let raw=parsed.text;
   let codeBlocks=[];
   let htmlBlocks=[];
   raw=raw.replace(/```(\w+)?\n([\s\S]*?)```/g,(m,lang,code)=>{const id=codeBlocks.length;codeBlocks.push({lang:lang||'',code});return `@@CODE${id}@@`;});
-  raw=raw.replace(/\n\nSources:\n([\s\S]*)$/,(m,list)=>{const id=htmlBlocks.length;htmlBlocks.push(sourcesHtml(list));return `\n\n@@HTML${id}@@`;});
   raw=raw.replace(/((?:^\|.*\|\s*$\n?){2,})/gm,(block)=>{
     const lines=block.trim().split(/\n/).filter(Boolean);
     if(lines.length<2 || !/^\|?\s*:?-{3,}/.test(lines[1].trim())) return block;
@@ -153,6 +207,7 @@ function fmt(s){
   t=t.replace(/\n/g,'<br>');
   codeBlocks.forEach((b,i)=>{const html=`<div class="code-wrap"><button class="copy" onclick="copyCode(this)">Copy</button><pre><code>${esc(b.code)}</code></pre></div>`;t=t.replace(`@@CODE${i}@@`,html);});
   htmlBlocks.forEach((html,i)=>{t=t.replace(`@@HTML${i}@@`,html);});
+  if(parsed.sources.length)t+=sourcePanel(parsed.sources);
   return t;
 }
 function friendlyClientError(msg){
