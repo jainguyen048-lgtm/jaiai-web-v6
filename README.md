@@ -1,3 +1,7 @@
-# JaiAI Web v6.5.6
+# JaiAI Web v6.5.8
 
-Mobile hotfix build. Upload this `index.html` to GitHub Pages.
+Family tier + Developer admin panel build.
+
+Upload `index.html` and this README to the GitHub Pages repo.
+
+After commit, wait 1-5 minutes and hard refresh the site.
